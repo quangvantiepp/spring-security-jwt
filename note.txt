@@ -1,0 +1,10 @@
++ link table
+ - relationship:
+    --trong database nếu 2 tables quan hệ nhiều nhiều mình sẽ tách thêm một bảng thứ 3 làm bảng trung gian cho 2 tables đó
+    --rong thiết kế database không tồn tại quan hệ nhiều nhiều chính vì vậy mà mình có thêm
+      một bảng trung gian ở giữa để bẻ mối quan hệ nhiều nhiều thành 2 mối quan hệ một nhiều .
+
+
++ query jpa repository
+ - nativeQuery = true vì câu truy vấn trong trường hợp này không phải là truy vấn SQL native.
+   Thay vào đó, nó là một truy vấn JPQL (Java Persistence Query Language) thông thường.
