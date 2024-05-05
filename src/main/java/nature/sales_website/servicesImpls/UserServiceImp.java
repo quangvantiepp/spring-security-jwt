@@ -2,7 +2,9 @@ package nature.sales_website.servicesImpls;
 
 import nature.sales_website.dto.UserDto;
 import nature.sales_website.entity.User;
+import nature.sales_website.models.checker.Checker;
 import nature.sales_website.models.converter.DtoConverter;
+import nature.sales_website.models.response.ActionStatus;
 import nature.sales_website.repositories.UserRepository;
 import nature.sales_website.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,25 +18,27 @@ public class UserServiceImp implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public Object create(String fullName, String email, String phoneNumber, String passWord) {
+    public String create(String fullName, String phoneNumber, String passWord) {
         // check phone number is exits
+        if(Checker.isNumericFirst(fullName)){
+            throw new RuntimeException("Passwords, FullName cannot begin with a number!");
+        }
         User user = userRepository.getUserByPhoneNumber(phoneNumber);
-        if (fullName == null ){
-            return "Enter your name, please!";
-        } else if (phoneNumber == null) {
-            return "Enter your phone number, please!";
-        } else if (passWord == null) {
-            return "Enter your password, please!";
-        } else if (user != null) {
-            return "There is already another account using this phone number!";
+        if (fullName == null || phoneNumber == null || passWord == null){
+            throw new RuntimeException("FullName, PhoneNumber or Password cannot be null");
+        }
+        if (user != null) {
+            throw new RuntimeException("There is already another account using this phone number!");
+        }
+        if (passWord.length() < 6){
+            throw new RuntimeException("Password must have a minimum of 6 characters!");
         }
         user = new User();
         user.setFullName(fullName);
-        user.setEmail(email);
         user.setPhoneNumber(phoneNumber);
-        user.setPassWord(passWord);
+        user.setPassword(passWord);
         userRepository.save(user);
-        return "success";
+        return ActionStatus.success;
     }
 
     @Override
@@ -76,49 +80,81 @@ public class UserServiceImp implements UserService {
         UserDto userDto = DtoConverter.convertToDto(user, UserDto.class);
         return userDto;
     }
-
     @Override
-    public Object updateUserInfo(String fullName, String email, String phoneNumber, String passWord, Long id) {
+    public String updateUserName(String fullName, Long id) {
         User user = userRepository.getUserById(id);
-        if (user == null){
-            return "not found user";
-        }
+        if (user == null) throw new RuntimeException("No user found to update info!");
 
-        if (fullName != null){
-            if ( fullName == user.getFullName()){
-                return "You are giving the same name as the old one";
-            }
-            user.setFullName(fullName);
-        }else if (email != null){
-            if( email == user.getEmail()){
-                return "You are giving the same email as the old one";
-            }
-            // need check email with Google
-            user.setEmail(email);
-        }else if (phoneNumber != null){
-            if (phoneNumber == user.getPhoneNumber() ){
-                return "You are giving the same phone number as the old one";
-            }
-            // need check phone number with sms otp
-            user.setPhoneNumber(phoneNumber);
-        }else if (passWord != null ){
-            if (passWord == user.getPassWord()){
-                return "You are giving the same pass word as the old one";
-            }
-            user.setPassWord(passWord);
+        if (fullName.equals(user.getFullName())){
+            throw new RuntimeException("You are giving the same Name as the old one!");
         }
+        user.setFullName(fullName);
         userRepository.save(user);
-        return "ok";
+        return ActionStatus.success;
     }
 
     @Override
-    public Object deleteUser(Long userId) {
+    public String updateUserEmail(String email, Long id) {
+        User user = userRepository.getUserById(id);
+        if (user == null) throw new RuntimeException("No user found to update info!");
+        if (email.equals(user.getEmail())){
+            throw new RuntimeException("You are giving the same Email as the old one!");
+        }
+
+        User userByEmail = userRepository.getUserByEmail(email);
+        if( userByEmail != null && !userByEmail.getId().equals(user.getId()) ){
+            throw new RuntimeException("There is already another account using this Email!");
+        }
+        // need check email with Google
+        user.setEmail(email);
+
+        userRepository.save(user);
+        return ActionStatus.success;
+    }
+
+    @Override
+    public String updateUserPhoneNumber(String phoneNumber, Long id) {
+        User user = userRepository.getUserById(id);
+        if (user == null) throw new RuntimeException("No user found to update info!");
+
+        if (phoneNumber.equals(user.getPhoneNumber())){
+            throw new RuntimeException("You are giving the same Phone number as the old one!");
+        }
+        User userByPhone = userRepository.getUserByPhoneNumber(phoneNumber);
+        if (userByPhone != null && !userByPhone.getId().equals(user.getId())){
+            throw new RuntimeException("There is already another account using this phone number!");
+        }
+        // need check phone number with sms otp
+        user.setPhoneNumber(phoneNumber);
+
+        userRepository.save(user);
+        return ActionStatus.success;
+    }
+
+    @Override
+    public String updateUserPassword(String password, Long id) {
+        User user = userRepository.getUserById(id);
+        if (user == null) throw new RuntimeException("No user found to update info!");
+
+        if (password.equals(user.getPassword())){
+            throw new RuntimeException("You are giving the same Password as the old one!");
+        }
+        // need check format password
+        if (password.length() < 6){
+            throw new RuntimeException("Password must have a minimum of 6 characters!");
+        }
+        user.setPassword(password);
+        userRepository.save(user);
+        return ActionStatus.success;
+    }
+
+    @Override
+    public String deleteUser(Long userId) {
         User user = userRepository.getUserById(userId);
         if (user == null){
-            return "not found user";
+            throw new RuntimeException("No user found to delete!");
         }
         userRepository.delete(user);
-        return "delete success";
+        return ActionStatus.success;
     }
-
 }

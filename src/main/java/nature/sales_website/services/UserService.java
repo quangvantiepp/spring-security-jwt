@@ -1,18 +1,20 @@
 package nature.sales_website.services;
 
 import nature.sales_website.dto.UserDto;
-import nature.sales_website.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public interface UserService {
-    Object create(String fullName, String email, String phoneNumber, String passWord);
+    String create(String fullName, String phoneNumber, String passWord);
     List<UserDto> getAllUser();
     UserDto getUserById(Long id);
     UserDto getUserByPhoneNumber(String phoneNumber);
     UserDto getUserByEmail(String email);
-    Object updateUserInfo(String fullName, String email, String phoneNumber, String passWord, Long id);
-    Object deleteUser(Long userId);
+    String updateUserName(String fullName, Long id);
+    String updateUserEmail(String email, Long id);
+    String updateUserPhoneNumber(String phoneNumber, Long id);
+    String updateUserPassword(String password, Long id);
+    String deleteUser(Long userId);
 }

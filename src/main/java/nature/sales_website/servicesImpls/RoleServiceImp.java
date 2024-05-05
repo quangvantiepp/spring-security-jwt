@@ -2,7 +2,9 @@ package nature.sales_website.servicesImpls;
 
 import nature.sales_website.dto.RoleDto;
 import nature.sales_website.entity.Role;
+import nature.sales_website.models.checker.Checker;
 import nature.sales_website.models.converter.DtoConverter;
+import nature.sales_website.models.response.ActionStatus;
 import nature.sales_website.repositories.RoleRepository;
 import nature.sales_website.services.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +18,24 @@ public class RoleServiceImp implements RoleService {
     @Autowired
     private RoleRepository roleRepository;
     @Override
-    public Object create(Role role) {
-        if (role.getName() == null){
-            return null;
+    public String create(String roleName) {
+        if(Checker.isNumericFirst(roleName)){
+            throw new RuntimeException("Names cannot begin with a number!");
         }
-      return  roleRepository.save(role);
+        Role role = roleRepository.getRoLeByName(roleName);
+        if (role != null){
+            throw new RuntimeException("Role already exists!");
+        }
+        role = new Role();
+        role.setName(roleName);
+        roleRepository.save(role);
+        return ActionStatus.success;
     }
 
     @Override
     public List<RoleDto> getAllRole() {
         List<Role> roleList = roleRepository.findAll();
-        if (roleList == null){
+        if (roleList.size() == 0){
             return null;
         }
         List<RoleDto> roleDtoList = DtoConverter.convertToDtoList(roleList, RoleDto.class);
@@ -34,36 +43,42 @@ public class RoleServiceImp implements RoleService {
     }
 
     @Override
-    public Object getRoleById(Long id) {
+    public RoleDto getRoleById(Integer id) {
         Role role = roleRepository.getById(id);
         if (role == null){
-            return "Not found role";
+            return null;
         }
         RoleDto roleDto = DtoConverter.convertToDto(role, RoleDto.class);
         return roleDto;
     }
 
     @Override
-    public Object updateRole(Long id, String name) {
-        Role role = roleRepository.getById(id);
-        if (role == null){
-            return "Not found role";
+    public String updateRole(Integer id, String name) {
+        if(Checker.isNumericFirst(name)){
+            throw new RuntimeException("Names cannot begin with a number!");
         }
-        if (name == role.getName()){
-            return "The name is the same as the current name!";
+        Role role = roleRepository.getById(id);
+        Role roleByName = roleRepository.getRoLeByName(name);
+        if (role == null){
+            throw new RuntimeException("No Roles found to update!");
+        }
+        if (roleByName != null){
+            if (name.equals(roleByName.getName())){
+                throw new RuntimeException("Name already exists!");
+            }
         }
         role.setName(name);
         roleRepository.save(role);
-        return "success";
+        return ActionStatus.success;
     }
 
     @Override
-    public Object deleteRole(Long id) {
+    public String deleteRole(Integer id) {
         Role role = roleRepository.getById(id);
         if (role == null){
-            return "Not found role";
+            throw new RuntimeException("No Role found to delete!");
         }
         roleRepository.delete(role);
-        return "success";
+        return ActionStatus.success;
     }
 }

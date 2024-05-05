@@ -11,9 +11,12 @@ import java.util.List;
 
 @Repository
 @EnableJpaRepositories
-public interface RoleRepository extends JpaRepository<Role, Long> {
+public interface RoleRepository extends JpaRepository<Role, Integer> {
 
     List<Role> findAll();
-    @Query(value = RoleQueryValue.GET_ROLE_BY_ID, nativeQuery = true)
-    Role getById(Long roleId);
+    @Query(value = RoleQueryValue.getRoleById, nativeQuery = true)
+    Role getById(Integer roleId);
+
+    @Query(value = "SELECT * FROM sales_website.roles u where u.name= :roleName", nativeQuery = true)
+    Role getRoLeByName(String roleName);
 }

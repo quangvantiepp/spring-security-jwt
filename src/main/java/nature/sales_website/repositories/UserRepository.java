@@ -12,16 +12,18 @@ import java.util.List;
 @Repository
 @EnableJpaRepositories
 public interface UserRepository extends JpaRepository<User, Long> {
-
      List<User> findAll();
-
-     @Query(value = UserQueryValue.GET_USER_BY_ID, nativeQuery = true)
+     @Query(value = UserQueryValue.getUserById, nativeQuery = true)
      User getUserById(Long userId);
-
-     @Query(value = UserQueryValue.GET_USER_BY_EMAIL, nativeQuery = true)
+     @Query(value = "SELECT * FROM sales_website.users u where u.full_name= :userName", nativeQuery = true)
+     User getUserByName(String userName);
+     @Query(value = UserQueryValue.getUserByEmail, nativeQuery = true)
      User getUserByEmail(String userEmail);
-
-     @Query(value = UserQueryValue.GET_USER_BY_PHONE_NUMBER, nativeQuery = true)
+     @Query(value = UserQueryValue.getUserByPhoneNumber, nativeQuery = true)
      User getUserByPhoneNumber(String phoneNumber);
+     @Query(value = "SELECT * FROM sales_website.users u where u.id= :userId and u.phone_number= :phoneNumber", nativeQuery = true)
+     User getUserByIdAndPhoneNumber(Long userId, String phoneNumber);
+     @Query(value = "SELECT * FROM sales_website.users u where u.id= :userId and u.password= :password", nativeQuery = true)
+     User getUserByPassword(Long userId, String password);
 
 }

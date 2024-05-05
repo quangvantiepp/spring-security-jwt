@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -15,6 +17,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Table(name ="users")
 public class User {
     @Id
@@ -23,9 +26,11 @@ public class User {
     private String fullName;
     private String email;
     private String phoneNumber;
-    private String passWord;
+    private String password;
     @CreationTimestamp
     private Timestamp createAt;
+    @LastModifiedDate
+    private Timestamp lastUpdated;
 
     // relationship
     // -- role table
@@ -35,5 +40,4 @@ public class User {
     inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roleSet;
 
-    // data transfer object
 }
