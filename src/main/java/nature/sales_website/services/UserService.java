@@ -1,14 +1,14 @@
 package nature.sales_website.services;
 
 import nature.sales_website.dto.UserDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public interface UserService {
     String create(String fullName, String phoneNumber, String passWord);
-    List<UserDto> getAllUser();
+    Page<UserDto> getAllUser(Pageable pageable);
     UserDto getUserById(Long id);
     UserDto getUserByPhoneNumber(String phoneNumber);
     UserDto getUserByEmail(String email);
@@ -17,4 +17,6 @@ public interface UserService {
     String updateUserPhoneNumber(String phoneNumber, Long id);
     String updateUserPassword(String password, Long id);
     String deleteUser(Long userId);
+    // other actions
+    Object getListRole(Long userId);
 }

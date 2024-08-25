@@ -2,17 +2,17 @@ package nature.sales_website.repositories;
 
 import nature.sales_website.entity.User;
 import nature.sales_website.repositories.queryValue.UserQueryValue;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 @EnableJpaRepositories
 public interface UserRepository extends JpaRepository<User, Long> {
-     List<User> findAll();
+     Page<User> findAll(Pageable pageable);
      @Query(value = UserQueryValue.getUserById, nativeQuery = true)
      User getUserById(Long userId);
      @Query(value = "SELECT * FROM sales_website.users u where u.full_name= :userName", nativeQuery = true)
@@ -25,5 +25,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
      User getUserByIdAndPhoneNumber(Long userId, String phoneNumber);
      @Query(value = "SELECT * FROM sales_website.users u where u.id= :userId and u.password= :password", nativeQuery = true)
      User getUserByPassword(Long userId, String password);
+     // others actions
 
 }

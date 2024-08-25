@@ -1,6 +1,8 @@
 package nature.sales_website.servicesImpls;
 
+import nature.sales_website.dto.RoleDto;
 import nature.sales_website.dto.UserDto;
+import nature.sales_website.entity.Role;
 import nature.sales_website.entity.User;
 import nature.sales_website.models.checker.Checker;
 import nature.sales_website.models.converter.DtoConverter;
@@ -8,9 +10,11 @@ import nature.sales_website.models.response.ActionStatus;
 import nature.sales_website.repositories.UserRepository;
 import nature.sales_website.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserServiceImp implements UserService {
@@ -42,13 +46,13 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public List<UserDto> getAllUser() {
-        List<User> userList = userRepository.findAll();
-        if (userList.size()  == 0 ){
+    public Page<UserDto> getAllUser(Pageable pageable) {
+        Page<User> userPage = userRepository.findAll(pageable);
+        if (userPage.isEmpty()){
             return null;
         }
-        List<UserDto> userDtoList = DtoConverter.convertToDtoList(userList, UserDto.class);
-        return userDtoList;
+        Page<UserDto> userDtoPage = DtoConverter.convertToDtoPage(userPage, UserDto.class, pageable );
+        return userDtoPage;
     }
 
     @Override
@@ -156,5 +160,16 @@ public class UserServiceImp implements UserService {
         }
         userRepository.delete(user);
         return ActionStatus.success;
+    }
+
+    @Override
+    public Object getListRole(Long userId) {
+        User user = userRepository.getUserById(userId);
+        if (user == null) throw new RuntimeException("User not found to get Role list!");
+
+        Set<Role> roleList = user.getRoleSet();
+        if (roleList == null) return null;
+        Set<RoleDto> roleDtoSet = DtoConverter.convertToDtoSet(roleList, RoleDto.class);
+        return roleDtoSet;
     }
 }

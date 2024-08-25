@@ -5,12 +5,15 @@ import nature.sales_website.models.response.ActionStatus;
 import nature.sales_website.models.response.ResponseData;
 import nature.sales_website.servicesImpls.UserServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -34,14 +37,27 @@ public class UserController {
     }
 
     @GetMapping("/get-all-users")
-    public Object getAllUser(){
+    public Object getAllUser(@RequestParam() Integer pageNumber, @RequestParam() Integer pageSize,
+                             @RequestParam(value ="sortField", required = false) String sortField,
+                             @RequestParam(value ="sortOrder",required = false) String sortOrder
+                             ){
+
+        if (pageNumber == null || pageSize == null) throw new RuntimeException("PageNumber and pageSize are required!");
+
+        Pageable pageable;
+        if (sortOrder != null && sortField != null){
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by(direction, sortField));
+        }else{
+            pageable = PageRequest.of(pageNumber, pageSize);
+        }
 
         try {
-            List<UserDto> userDtoList = userServiceImp.getAllUser();
-            if (userDtoList == null){
+            Page<UserDto> userDtoPage = userServiceImp.getAllUser(pageable);
+            if (userDtoPage == null){
                 return ActionStatus.data(ActionStatus.not_found,new ArrayList<>(),HttpStatus.NOT_FOUND);
             }else{
-                return ActionStatus.data(ActionStatus.success,userDtoList,HttpStatus.OK);
+                return ActionStatus.data(ActionStatus.success,userDtoPage,HttpStatus.OK);
             }
         }
         catch (Exception e){
@@ -151,5 +167,22 @@ public class UserController {
         catch (Exception e){
             return ActionStatus.exceptionData(e.getMessage());
         }
+    }
+    // other actions
+    @GetMapping("/get-role-list-of-user")
+    public Object getRoleListOfUser(@RequestParam(value = "userId") Long userId){
+
+        try {
+            Object roleList = userServiceImp.getListRole(userId);
+            if (roleList == null){
+                return ActionStatus.data(ActionStatus.not_found, new ArrayList<>(), HttpStatus.NOT_FOUND);
+            }else{
+                return ActionStatus.data(ActionStatus.success, roleList, HttpStatus.OK);
+            }
+        }
+        catch (Exception e){
+            return ActionStatus.exceptionData(e.getMessage());
+        }
+
     }
 }

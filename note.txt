@@ -1,10 +1,34 @@
-+ link table
- - relationship:
-    --trong database nếu 2 tables quan hệ nhiều nhiều mình sẽ tách thêm một bảng thứ 3 làm bảng trung gian cho 2 tables đó
-    --rong thiết kế database không tồn tại quan hệ nhiều nhiều chính vì vậy mà mình có thêm
-      một bảng trung gian ở giữa để bẻ mối quan hệ nhiều nhiều thành 2 mối quan hệ một nhiều .
+I. link table
+ 1.1 relationship:
+    1.2 trong database nếu 2 tables quan hệ nhiều nhiều mình sẽ tách thêm một bảng thứ 3 làm bảng trung gian cho 2 tables đó
+    1.3 trong thiết kế database không tồn tại quan hệ nhiều nhiều chính vì vậy mà mình có thêm
+        một bảng trung gian ở giữa để bẻ mối quan hệ nhiều nhiều thành 2 mối quan hệ một nhiều.
+
+    1.4 Trong trường hợp One-to-Many,
+        bạn không cần tạo bảng phụ vì JPA sẽ quản lý mối quan hệ này bằng cách
+        thêm một khóa ngoại (foreign key) trong bảng con (bảng Product).
+        Khóa ngoại này (category_id) trong bảng Product sẽ trỏ đến khóa chính (id) của bảng Category.
+        Điều này cho phép bạn thiết lập mối quan hệ giữa các bảng mà không cần tạo thêm bảng phụ.
+        Để làm rõ hơn, dưới đây là cách JPA quản lý các bảng trong cơ sở dữ liệu dựa trên các class Category và Product:
+
+        Bảng Category:
+            id (Primary Key)
+            name
+        Bảng Product:
+            id (Primary Key)
+            name
+            category_id (Foreign Key trỏ đến bảng Category)
+
+
 
 
 + query jpa repository
  - nativeQuery = true vì câu truy vấn trong trường hợp này không phải là truy vấn SQL native.
    Thay vào đó, nó là một truy vấn JPQL (Java Persistence Query Language) thông thường.
+
+
++ query from three table
+SELECT * FROM sales_website.users u
+ inner join sales_website.user_role ur on u.id = ur.user_id
+ inner join sales_website.roles r on ur.role_id = r.id
+ where u.id =1;

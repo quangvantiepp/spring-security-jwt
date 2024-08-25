@@ -10,5 +10,4 @@ public class UserQueryValue {
    public static final String getUserByPhoneNumber = """
            SELECT * FROM sales_website.users u where u.phone_number= :phoneNumber
            """;
-
 }
