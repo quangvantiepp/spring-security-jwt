@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      Page<User> findAll(Pageable pageable);
      @Query(value = UserQueryValue.getUserById, nativeQuery = true)
      User getUserById(Long userId);
-     @Query(value = "SELECT * FROM sales_website.users u where u.full_name= :userName", nativeQuery = true)
+     @Query(value = "SELECT * FROM sales_website.users u where u.user_name= :userName", nativeQuery = true)
      User getUserByName(String userName);
      @Query(value = UserQueryValue.getUserByEmail, nativeQuery = true)
      User getUserByEmail(String userEmail);

@@ -1,4 +1,4 @@
-package codegym.danang.demo.util;
+package nature.sales_website.utils;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

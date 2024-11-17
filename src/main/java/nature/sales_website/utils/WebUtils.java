@@ -1,9 +1,9 @@
-package codegym.danang.demo.util;
-
-import java.util.Collection;
+package nature.sales_website.utils;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+
+import java.util.Collection;
 
 public class WebUtils {
 

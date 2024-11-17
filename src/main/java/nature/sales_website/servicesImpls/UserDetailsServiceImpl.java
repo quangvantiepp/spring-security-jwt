@@ -1,13 +1,12 @@
-package com.example.service;
+package nature.sales_website.servicesImpls;
 
-import com.example.entity.AppUser;
-import com.example.entity.UserRole;
-import com.example.repository.AppUserRepository;
-import com.example.repository.UserRoleRepository;
+import nature.sales_website.entity.Role;
+import nature.sales_website.entity.User;
+import nature.sales_website.repositories.RoleRepository;
+import nature.sales_website.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,41 +14,42 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private AppUserRepository appUserRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private UserRoleRepository userRoleRepository;
+    private RoleRepository roleRepository;
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        AppUser appUser = this.appUserRepository.findByUserName(userName);
+        User currentUser = userRepository.getUserByName(userName);
 
-        if (appUser == null) {
+        if (currentUser == null) {
             System.out.println("User not found! " + userName);
             throw new UsernameNotFoundException("User " + userName + " was not found in the database");
         }
 
-        System.out.println("Found User: " + appUser);
+        System.out.println("Found User: " + currentUser);
 
         // [ROLE_USER, ROLE_ADMIN,..]
-        List<UserRole> userRoles = this.userRoleRepository.findByAppUser(appUser);
+        Set<Role> userRoles = currentUser.getRoleSet();
 
         List<GrantedAuthority> grantList = new ArrayList<GrantedAuthority>();
         if (userRoles != null) {
-            for (UserRole userRole : userRoles) {
+            for (Role userRole : userRoles) {
                 // ROLE_USER, ROLE_ADMIN,..
-                GrantedAuthority authority = new SimpleGrantedAuthority(userRole.getAppRole().getRoleName());
+                GrantedAuthority authority = new SimpleGrantedAuthority(userRole.getName());
                 grantList.add(authority);
             }
         }
 
-        UserDetails userDetails = (UserDetails) new User(appUser.getUserName(), //
-                appUser.getEncrytedPassword(), grantList);
+        UserDetails userDetails = (UserDetails) new org.springframework.security.core.userdetails.User(currentUser.getUserName(), //
+                currentUser.getPassword(), grantList);
 
         return userDetails;
     }

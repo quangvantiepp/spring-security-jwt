@@ -25,10 +25,11 @@ public class UserController {
     @PostMapping("/create-user")
     public ResponseEntity<ResponseData> Create(@RequestParam(value = "fullName") String fullName,
                                                @RequestParam(value = "phoneNumber")  String phoneNumber,
-                                               @RequestParam(value ="passWord")  String passWord){
+                                               @RequestParam(value ="passWord")  String passWord,
+                                               @RequestParam(value = "userName") String userName){
 
         try {
-            String status = userServiceImp.create(fullName, phoneNumber, passWord);
+            String status = userServiceImp.create(fullName, phoneNumber, passWord, userName);
             return ActionStatus.data(status, ActionStatus.created, HttpStatus.CREATED);
         }
         catch(Exception e) {

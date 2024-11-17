@@ -25,6 +25,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String fullName;
+    private String userName;
     private String email;
     private String phoneNumber;
     private String password;
@@ -35,7 +36,7 @@ public class User {
 
     // relationship
     // -- role table
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
     joinColumns = @JoinColumn(name = "user_id"),
     inverseJoinColumns = @JoinColumn(name = "role_id"))

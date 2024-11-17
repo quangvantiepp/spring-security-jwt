@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface UserService {
-    String create(String fullName, String phoneNumber, String passWord);
+    String create(String fullName, String phoneNumber, String passWord, String usrName);
     Page<UserDto> getAllUser(Pageable pageable);
     UserDto getUserById(Long id);
     UserDto getUserByPhoneNumber(String phoneNumber);

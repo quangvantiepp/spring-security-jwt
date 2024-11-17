@@ -9,6 +9,7 @@ import nature.sales_website.models.converter.DtoConverter;
 import nature.sales_website.models.response.ActionStatus;
 import nature.sales_website.repositories.UserRepository;
 import nature.sales_website.services.UserService;
+import nature.sales_website.utils.EncrytedPasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,7 @@ public class UserServiceImp implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public String create(String fullName, String phoneNumber, String passWord) {
+    public String create(String fullName, String phoneNumber, String passWord, String userName) {
         // check phone number is exits
         if(Checker.isNumericFirst(fullName)){
             throw new RuntimeException("Passwords, FullName cannot begin with a number!");
@@ -37,10 +38,13 @@ public class UserServiceImp implements UserService {
         if (passWord.length() < 6){
             throw new RuntimeException("Password must have a minimum of 6 characters!");
         }
+
+        String encodePassword = EncrytedPasswordUtils.encrytePassword(passWord);
         user = new User();
         user.setFullName(fullName);
         user.setPhoneNumber(phoneNumber);
-        user.setPassword(passWord);
+        user.setPassword(encodePassword);
+        user.setUserName(userName);
         userRepository.save(user);
         return ActionStatus.success;
     }
