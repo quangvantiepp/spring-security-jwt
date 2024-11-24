@@ -20,7 +20,7 @@ public class JwtTokenProvider {
     // 604800000L ms = 7 days,
 //    private final  long JWT_EXPIRATION = 604800000L;
     // 30 minutes
-    private final  long JWT_EXPIRATION = 1800L;
+    private final  long JWT_EXPIRATION = 1800L * 1000;
 
     public String generateToken(CustomUserDetails customUserDetails){
         Date dateNow = new Date();
