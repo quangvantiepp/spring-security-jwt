@@ -25,7 +25,7 @@ public class UserServiceImp implements UserService {
     @Override
     public String create(String fullName, String phoneNumber, String passWord, String userName) {
         // check phone number is exits
-        if(Checker.isNumericFirst(fullName)){
+        if(Checker.isNumericFirst(fullName) ){
             throw new RuntimeException("Passwords, FullName cannot begin with a number!");
         }
         User user = userRepository.getUserByPhoneNumber(phoneNumber);
