@@ -2,6 +2,8 @@ package nature.sales_website.controllers;
 
 import nature.sales_website.data.CustomUserDetails;
 import nature.sales_website.data.LoginRequest;
+import nature.sales_website.dto.UserDto;
+import nature.sales_website.entity.User;
 import nature.sales_website.jwt.JwtTokenProvider;
 import nature.sales_website.models.response.AccessTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -33,7 +36,14 @@ public class LoginController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
-        return new AccessTokenResponse(jwt);
+        User authUserInfo = ((CustomUserDetails) authentication.getPrincipal()).getUser();
+        UserDto userDto = new UserDto();
+        userDto.setId(authUserInfo.getId());
+        userDto.setFullName(authUserInfo.getFullName());
+        userDto.setUserName(authUserInfo.getUserName());
+        userDto.setRoleSet(authUserInfo.getRoleSet().stream().map(role->role.getName()).collect(Collectors.toSet()));
+
+        return new AccessTokenResponse(jwt, userDto);
     }
 
     @PostMapping("/logout")
