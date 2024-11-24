@@ -28,7 +28,7 @@ public class SpringFoxConfig {
                 .description("JWT token (Bearer + <token>)")
                 .modelRef(new ModelRef("string"))
                 .parameterType("header")
-                .required(true)
+                .required(false)
                 .build();
 
         return new Docket(DocumentationType.SWAGGER_2)
