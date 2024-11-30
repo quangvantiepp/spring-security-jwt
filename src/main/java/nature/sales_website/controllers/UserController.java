@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
     private UserServiceImp userServiceImp;
 
-    @PostMapping("/create-user")
+    @PostMapping("/register")
     public ResponseEntity<ResponseData> Create(@RequestParam(value = "fullName") String fullName,
                                                @RequestParam(value = "phoneNumber")  String phoneNumber,
                                                @RequestParam(value ="passWord")  String passWord,

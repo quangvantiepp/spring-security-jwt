@@ -16,16 +16,26 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JwtTokenProvider {
 
-    private  final String JWT_SECRET ="quang_van_tiep";
+    private  final String JWT_SECRET ="quang_van_tiep_dev";
     // 604800000L ms = 7 days,
 //    private final  long JWT_EXPIRATION = 604800000L;
     // 30 minutes
-    private final  long JWT_EXPIRATION = 1800L * 1000;
+//    private final  long JWT_EXPIRATION = 1800L * 1000;
+//    private final long REFRESH_JWT_EXPIRATION = 604800000L;
 
-    public String generateToken(CustomUserDetails customUserDetails){
+    private final  long JWT_EXPIRATION = 300L * 1000;
+    private final long REFRESH_JWT_EXPIRATION = 600L * 1000;
+
+    // Use secure algorithms like HS256, RS256.
+
+    public String generateToken(CustomUserDetails customUserDetails, Boolean isRefresh){
         Date dateNow = new Date();
-        Date expriryDate = new Date(dateNow.getTime() + JWT_EXPIRATION);
-
+        Date expriryDate;
+        if (isRefresh){
+            expriryDate = new Date(dateNow.getTime() + REFRESH_JWT_EXPIRATION);
+        }else{
+            expriryDate = new Date(dateNow.getTime() + JWT_EXPIRATION);
+        }
         // add more info
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", customUserDetails.getAuthorities().stream().map((GrantedAuthority::getAuthority)).collect(Collectors.toList()));
@@ -65,4 +75,5 @@ public class JwtTokenProvider {
         }
         return false;
     }
+
 }
