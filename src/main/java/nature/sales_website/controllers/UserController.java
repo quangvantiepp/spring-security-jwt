@@ -37,7 +37,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/get-all-users")
+    @GetMapping("/all-users")
     public Object getAllUser(@RequestParam() Integer pageNumber, @RequestParam() Integer pageSize,
                              @RequestParam(value ="sortField", required = false) String sortField,
                              @RequestParam(value ="sortOrder",required = false) String sortOrder
@@ -65,7 +65,7 @@ public class UserController {
             return ActionStatus.exceptionData(e.getMessage());
         }
     }
-    @GetMapping("/get-user-by-id")
+    @GetMapping("/by-id")
     public Object getUserById(@RequestParam(value = "id") Long id){
 
         try {
@@ -81,7 +81,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/get-user-by-phone-number")
+    @GetMapping("/by-phone-number")
     public Object getUserByPhoneNumber(@RequestParam(value = "phoneNumber") String phoneNumber){
         try {
             UserDto userDto = userServiceImp.getUserByPhoneNumber(phoneNumber);
@@ -96,7 +96,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/get-user-by-email")
+    @GetMapping("/by-email")
     public Object getUserByEmail(@RequestParam(value = "email") String email){
 
         try {
@@ -113,7 +113,7 @@ public class UserController {
 
     }
 
-    @PutMapping("/update-user-name")
+    @PutMapping("/update-full-name")
     public Object updateUserName(@RequestParam(value = "fullName") String fullName,
                                  @RequestParam(value = "id") Long id){
         try {
@@ -124,7 +124,7 @@ public class UserController {
             return ActionStatus.exceptionData(e.getMessage());
         }
     }
-    @PutMapping("/update-user-email")
+    @PutMapping("/update-email")
     public Object updateUserEmail(@RequestParam(value = "email")  String email,
                                   @RequestParam(value = "id") Long id){
         try {
@@ -135,7 +135,7 @@ public class UserController {
             return ActionStatus.exceptionData(e.getMessage());
         }
     }
-    @PutMapping("/update-user-phone-number")
+    @PutMapping("/update-phone-number")
     public Object updateUserPhoneNumber(@RequestParam(value = "phoneNumber")  String phoneNumber,
                                         @RequestParam(value = "id") Long id){
         try {
@@ -158,7 +158,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/delete-user-by-id")
+    @DeleteMapping("/delete")
     public Object deleteUserById(@RequestParam(value = "id") Long id){
 
         try {
@@ -170,7 +170,7 @@ public class UserController {
         }
     }
     // other actions
-    @GetMapping("/get-role-list-of-user")
+    @GetMapping("/role-list")
     public Object getRoleListOfUser(@RequestParam(value = "userId") Long userId){
 
         try {
