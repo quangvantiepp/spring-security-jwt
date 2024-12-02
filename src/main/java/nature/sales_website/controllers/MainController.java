@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.security.Principal;
 
+/**
+ * Main Controller for test security
+ */
+
 @Controller
 public class MainController {
 
