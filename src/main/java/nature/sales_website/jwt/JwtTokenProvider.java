@@ -23,7 +23,7 @@ public class JwtTokenProvider {
 //    private final  long JWT_EXPIRATION = 1800L * 1000;
 //    private final long REFRESH_JWT_EXPIRATION = 604800000L;
 
-    private final  long JWT_EXPIRATION = 300L * 1000;
+    private final  long JWT_EXPIRATION = 300L * 1000; // 5 minutes
     private final long REFRESH_JWT_EXPIRATION = 600L * 1000;
 
     // Use secure algorithms like HS256, RS256.

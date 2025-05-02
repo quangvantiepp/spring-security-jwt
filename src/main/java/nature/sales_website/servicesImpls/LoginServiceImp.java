@@ -6,6 +6,7 @@ import nature.sales_website.dto.UserDto;
 import nature.sales_website.entity.User;
 import nature.sales_website.jwt.JwtTokenProvider;
 import nature.sales_website.models.response.AccessTokenResponse;
+import nature.sales_website.repositories.RefreshTokenRepository;
 import nature.sales_website.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +21,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,7 +34,13 @@ public class LoginServiceImp {
     @Autowired
     private UserRepository userRepository;
 
-    public AccessTokenResponse loginAuthenticate( LoginRequest request, HttpServletResponse response){
+    @Autowired
+    private RefreshTokenServiceImpl refreshTokenServiceImpl;
+
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
+
+    public AccessTokenResponse loginAuthenticate( LoginRequest request, HttpServletResponse response, String deviceId){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
@@ -61,6 +69,15 @@ public class LoginServiceImp {
         refreshCookie.setMaxAge(1 * 24 * 60 * 60); // expiration one day
         response.addCookie(refreshCookie);
         // spring automatically send to front-end
+
+        // handle to save refresh-token
+        Optional token = refreshTokenRepository.findByUserIdAndDeviceId(authUserInfo.getId(), deviceId);
+
+        if (token.isEmpty()){
+            refreshTokenServiceImpl.create(refresh_jwt, deviceId, authUserInfo.getId());
+        }else{
+            refreshTokenServiceImpl.update(refresh_jwt, deviceId, authUserInfo.getId());
+        }
 
         return new AccessTokenResponse(jwt, "true", userDto);
     }
