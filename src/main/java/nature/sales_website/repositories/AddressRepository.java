@@ -12,7 +12,7 @@ import java.util.List;
 @EnableJpaRepositories
 public interface AddressRepository extends JpaRepository<UserAddress, Long> {
     public List<UserAddress> findAll();
-    @Query(value = "SELECT * FROM sales_website.user_address u where u.user_id = :userId",
+    @Query(value = "SELECT * FROM user_address u where u.user_id = :userId",
     nativeQuery = true)
     public List<UserAddress> getUserAddressByUserId(Long userId);
 }
