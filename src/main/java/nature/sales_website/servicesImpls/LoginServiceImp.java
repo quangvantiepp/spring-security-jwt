@@ -40,13 +40,20 @@ public class LoginServiceImp {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
-    public AccessTokenResponse loginAuthenticate( LoginRequest request, HttpServletResponse response, String deviceId){
+    public AccessTokenResponse loginAuthenticate( LoginRequest request, HttpServletResponse response){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
                         request.getPassword()
                 )
         );
+
+        String deviceId = request.getDeviceId();
+
+        if (deviceId == null){
+            throw new RuntimeException("Device id is required");
+        }
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = jwtTokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal(), false);

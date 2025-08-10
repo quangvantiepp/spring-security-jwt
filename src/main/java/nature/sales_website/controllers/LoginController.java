@@ -21,10 +21,10 @@ public class LoginController {
     private LoginServiceImp loginServiceImp;
 
     @PostMapping("/login")
-    public ResponseEntity<Object> authenticateUser(@Valid @RequestBody LoginRequest request, HttpServletResponse response, @RequestParam(value = "deviceId") String deviceId){
+    public ResponseEntity<Object> authenticateUser(@Valid @RequestBody LoginRequest request, HttpServletResponse response){
 
         try {
-            AccessTokenResponse accessTokenResponse = loginServiceImp.loginAuthenticate(request, response, deviceId);
+            AccessTokenResponse accessTokenResponse = loginServiceImp.loginAuthenticate(request, response);
             return ResponseEntity.ok().body(accessTokenResponse);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
